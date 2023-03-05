@@ -219,29 +219,26 @@ def process_input(smiles:str, filename:str, verbose:bool, total_score:bool):
         raise ValueError(f"No input was provided")
 
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
 
-#     parser = argparse.ArgumentParser(description='Script for calculating Spacial Score (SPS) for small molecules.', usage=None,
-#                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-#     parser.add_argument('-s', action="store",
-#                         help='Your input SMILES string for which to calculate the score', default=None)
-#     parser.add_argument('-f', action="store",
-#                         help='Your .csv or .tsv file containing column called "Smiles" containing SMILES strings. Resutls will be saved in a new .csv file', 
-#                         metavar='filename.ext', 
-#                         default=None)
-#     parser.add_argument('-v', action="store_true",
-#                         help='Option to print verbose results', 
-#                         default=False)
-#     parser.add_argument('-t', action="store_true",
-#                         help='Option to calculate total SPS (no normalisation)',
-#                         default=False)
+    parser = argparse.ArgumentParser(description='Script for calculating Spacial Score (SPS) for small molecules.', usage=None,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('-s', action="store",
+                        help='Your input SMILES string for which to calculate the score', default=None)
+    parser.add_argument('-f', action="store",
+                        help='Your .csv or .tsv file containing column called "Smiles" containing SMILES strings. Resutls will be saved in a new .csv file', 
+                        metavar='filename.ext', 
+                        default=None)
+    parser.add_argument('-v', action="store_true",
+                        help='Option to print verbose results', 
+                        default=False)
+    parser.add_argument('-t', action="store_true",
+                        help='Option to calculate total SPS (no normalisation)',
+                        default=False)
                                             
-#     if len(sys.argv) < 2:
-#         parser.print_help()
-#         sys.exit(1)
+    if len(sys.argv) < 2:
+        parser.print_help()
+        sys.exit(1)
 
-#     ARGS = parser.parse_args()
-#     process_input(ARGS.s, ARGS.f, ARGS.v, ARGS.t)
-
-
-print(calculate_score_from_smiles('C[C@@H]1CC[C@@]23CCC(=O)[C@H]2[C@@]1([C@@H](C[C@@]([C@H]([C@@H]3C)O)(C)C=C)OC(=O)CO)C', verbose=True))
+    ARGS = parser.parse_args()
+    process_input(ARGS.s, ARGS.f, ARGS.v, ARGS.t)
