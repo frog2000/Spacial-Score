@@ -1,14 +1,13 @@
 from rdkit import Chem
 import rdkit.Chem.Descriptors as Desc
 import numpy as np
-import copy
 import argparse
 import sys
 import csv
 
 
 class SpacialScore:
-
+    """Class intended for calculating spacial score (SPS) and size-normalised SPS (nSPS) for small organic molecules"""
     def __init__(self, smiles, mol, verbose=False):
         self.smiles = smiles
         self.mol = mol
@@ -55,14 +54,6 @@ class SpacialScore:
 
     def find_stereo_atom_idxs(self, includeUnassigned=True):
         """Finds indeces of atoms that are (pseudo)stereo/chiralcentres, in repsect to the attached groups (does not account for double bond isomers)"""
-
-        # mol2 = copy.deepcopy(self.mol)
-        # for atom in mol2.GetAtoms():
-        #     atom.SetChiralTag(Chem.ChiralType.CHI_UNSPECIFIED)
-        # mol2 = Chem.MolFromSmiles(Chem.MolToSmiles(mol2))
-
-        # chiral_centers = Chem.FindMolChiralCenters(mol2, includeUnassigned=includeUnassigned, includeCIP=False, useLegacyImplementation=True)
-        # chiral_idxs = [atom_idx for atom_idx, _ in chiral_centers]
         stereo_centers = Chem.FindMolChiralCenters(self.mol, includeUnassigned=includeUnassigned, includeCIP=False, useLegacyImplementation=False)
         stereo_idxs = [atom_idx for atom_idx, _ in stereo_centers]
         return stereo_idxs
@@ -103,7 +94,7 @@ class SpacialScore:
 
         if hyb_type in hybridisations.keys():
             return hybridisations[hyb_type]
-        return 4
+        return 4  # h score for any other hybridisation than sp, sp2 or sp3 
     
 
     def _account_for_stereo(self, atom_idx):
@@ -118,7 +109,7 @@ class SpacialScore:
 
     def _account_for_ring(self, atom):
         """Calculates the ring score for a single atom in a molecule"""
-        if atom.GetIsAromatic():  # armoatic rings are not promoted 
+        if atom.GetIsAromatic():  # aromatic rings are not promoted 
             return 1
         if atom.IsInRing():
             return 2
@@ -132,7 +123,7 @@ class SpacialScore:
 
 
 def smiles_to_mol(smiles: str):
-    """ Generate a RDKit Molecule from a Smiles.
+    """ Generate a RDKit Molecule from SMILES.
 
     Parameters:
     ===========
@@ -151,13 +142,65 @@ def smiles_to_mol(smiles: str):
         return np.nan
 
 
-def calculate_score_from_smiles(smiles: str, per_atom=False, verbose=False):
-    """ Calculates the spacial score as a total score or per-atom score for a molecule.
+def process_input(smiles:str, filename:str, output_name:str, total_score:bool, verbose:bool, confirmation:False):
+    """Processes the command line input to print out the resulting score or create a file with added results"""
+
+    if smiles:  # process a directly provided SMILES string
+        result = calculate_score_from_smiles(smiles, per_atom=(not total_score), verbose=verbose)
+        if not verbose:
+            score_type = "SPS" if total_score else "nSPS" 
+            print(f"\nNormalisation Applied: {not total_score}\nSMILES: {smiles}\nCalculated {score_type}: {result}")
+        if result is np.nan:
+            print("\nPlease double-check your input SMILES string...")
+    
+    elif filename:  # process provided file
+        provided_filename_base = filename.split(".")[0]
+        output_filename = output_name if output_name else provided_filename_base + "_SPS.csv"
+        outfile = open(output_filename, "w")
+        
+        # read the input .csv or .tsv file
+        if filename.endswith("csv"):
+            infile = open(filename, "r")
+            reader = csv.DictReader(infile, dialect="excel")
+        elif filename.endswith("tsv"):
+            infile = open(filename, "r")
+            reader = csv.DictReader(infile, dialect="excel-tab")
+        else:
+            raise ValueError(f"Unknown input file format: {filename}")
+
+        print("\nProcessing, please wait...")
+        for idx, row in enumerate(reader):
+            if idx == 0:
+                header = [column_name for column_name in row]  # read existing headers
+                # add SPS or nSPS column to the file 
+                if total_score:
+                    header.append("SPS")  
+                header.append("nSPS")
+                outfile.write(",".join(header) + "\n")
+            
+            if total_score:
+                row["SPS"] = calculate_score_from_smiles(row["Smiles"], per_atom=False, verbose=verbose)
+            row["nSPS"] = calculate_score_from_smiles(row["Smiles"], per_atom=True, verbose=verbose)
+            
+            line = [str(row[x]) for x in row]  # reconstruct the row 
+            outfile.write(",".join(line) + "\n")
+            if confirmation:
+                print("Finished calculations for:", row["Smiles"])
+
+        outfile.close()
+        infile.close()
+        print(f"Finished. {output_filename} was saved.")
+    else:
+        raise ValueError(f"No input was provided")
+
+
+def calculate_score_from_smiles(smiles: str, per_atom=False, verbose=False) -> float:
+    """ Calculates the spacial score as a total SPS or size-normalised, per-atom nSPS for a molecule.
 
     Parameters:
     ===========
     smiles: valid SMILES string
-    per_atom: flag to denote if the normalised per-atom result should be returned 
+    per_atom: flag to denote if the normalised per-atom result (nSPS) should be returned
     verbose: flag to denote if the detailed scores for each atom should be printed
 
     Returns:
@@ -173,67 +216,31 @@ def calculate_score_from_smiles(smiles: str, per_atom=False, verbose=False):
     return sps.score
 
 
-def process_input(smiles:str, filename:str, verbose:bool, total_score:bool):
-    """Processes the command line input to"""
-
-    if smiles:
-        result = calculate_score_from_smiles(smiles, per_atom=(not total_score), verbose=verbose)
-        if not verbose:
-            print(f"SMILES: {smiles}\nCalculated score: {result}\nNormalisation Applied: {not total_score}")
-        if result is np.nan:
-            print("\nPlease double-check your input SMILES string...")
-    
-    elif filename:
-        provided_filename_base = filename.split(".")[0]
-        output_filename = provided_filename_base + "_SPS.csv"
-        outfile = open(output_filename, "w")
-        
-        if filename.endswith("csv"):
-            infile = open(filename, "r")
-            reader = csv.DictReader(infile, dialect="excel")
-        elif filename.endswith("tsv"):
-            infile = open(filename, "r")
-            reader = csv.DictReader(infile, dialect="excel-tab")
-        else:
-            raise ValueError(f"Unknown input file format: {filename}")
-
-        for idx, row in enumerate(reader):
-            if idx == 0:
-                header = [column_name for column_name in row]
-                if total_score:
-                    header.append("SPS")
-                header.append("nSPS")
-                outfile.write(",".join(header) + "\n")
-            
-            if total_score:
-                row["SPS"] = calculate_score_from_smiles(row["Smiles"], per_atom=False, verbose=verbose)
-            row["nSPS"] = calculate_score_from_smiles(row["Smiles"], per_atom=True, verbose=verbose)
-            
-            line = [str(row[x]) for x in row]
-            outfile.write(",".join(line) + "\n")
-            print("Finished calculations for:", row["Smiles"])
-
-        outfile.close()
-        infile.close()
-    else:
-        raise ValueError(f"No input was provided")
-
-
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='Script for calculating Spacial Score (SPS) for small molecules.', usage=None,
-                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(description=
+    'Script for calculating Spacial Score (SPS) or normalised SPS (nSPS) for small molecules.\
+    \nThe script can calculate the scores for a direct SMILES input or for a .csv or .tsv file containing a list of SMILES.\
+    \nnSPS is calculated by deafult.', 
+    usage=None, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-s', action="store",
                         help='Your input SMILES string for which to calculate the score', default=None)
     parser.add_argument('-f', action="store",
-                        help='Your .csv or .tsv file containing column called "Smiles" containing SMILES strings. Resutls will be saved in a new .csv file', 
+                        help='Your .csv or .tsv file containing column called "Smiles" which contains SMILES strings. Resutls will be saved in a new .csv file', 
                         metavar='filename.ext', 
                         default=None)
-    parser.add_argument('-v', action="store_true",
-                        help='Option to print verbose results', 
-                        default=False)
+    parser.add_argument('-o', action="store",
+                        help='You can specify name of the output .csv file. Not required.', 
+                        metavar='filename.ext', 
+                        default=None)
     parser.add_argument('-t', action="store_true",
-                        help='Option to calculate total SPS (no normalisation)',
+                        help='Option to calculate total SPS (no normalisation).',
+                        default=False)
+    parser.add_argument('-v', action="store_true",
+                        help='Option to print verbose results, with information for each atom index.', 
+                        default=False)
+    parser.add_argument('-p', action="store_true",
+                        help='Option to print confirmation after procession of each SMILES string in a file.',
                         default=False)
                                             
     if len(sys.argv) < 2:
@@ -241,4 +248,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
     ARGS = parser.parse_args()
-    process_input(ARGS.s, ARGS.f, ARGS.v, ARGS.t)
+    process_input(smiles=ARGS.s, filename=ARGS.f, output_name=ARGS.o, total_score=ARGS.t, verbose=ARGS.v, confirmation=ARGS.p) 
