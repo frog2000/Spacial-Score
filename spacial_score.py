@@ -227,7 +227,7 @@ if __name__ == "__main__":
     usage=None, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-s', action="store",
                         help='Your input SMILES string for which to calculate the score', default=None)
-    parser.add_argument('-f', action="store",
+    parser.add_argument('-i', action="store",
                         help='Your .csv or .tsv file containing column called "Smiles" which contains SMILES strings. Resutls will be saved in a new .csv file', 
                         metavar='filename.ext', 
                         default=None)
@@ -250,4 +250,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
     ARGS = parser.parse_args()
-    process_input(smiles=ARGS.s, filename=ARGS.f, output_name=ARGS.o, total_score=ARGS.t, verbose=ARGS.v, confirmation=ARGS.p) 
+    process_input(smiles=ARGS.s, filename=ARGS.i, output_name=ARGS.o, total_score=ARGS.t, verbose=ARGS.v, confirmation=ARGS.p) 
