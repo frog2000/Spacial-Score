@@ -1,3 +1,5 @@
+# Version 1.0
+
 from rdkit import Chem
 import rdkit.Chem.Descriptors as Desc
 import numpy as np
