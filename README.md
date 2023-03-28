@@ -4,7 +4,7 @@ A Comprehensive Topological Indicator for Small Molecule Complexity
 
 The score is intended for assessing molecular topology of organic molecules and improve upon the idea of the fraction of stereo and sp<sup>3</sup> carbons.
 
-The script requires [RDKit package](https://www.rdkit.org/) and numpy.
+The script requires [RDKit package](https://www.rdkit.org/) and [NumPy](https://numpy.org/).
 
 The script can be used directly from a command line, reading either a directly provided SMILES string (-s) or a .csv/.tsv file (-i):
 ```
