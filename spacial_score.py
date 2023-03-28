@@ -243,7 +243,7 @@ if __name__ == "__main__":
                         default=None)
     parser.add_argument('-o', action="store",
                         help='You can specify name of the output .csv file. Not required.', 
-                        metavar='filename.ext', 
+                        metavar='filename.csv', 
                         default=None)
     parser.add_argument('-t', action="store_true",
                         help='Option to calculate total SPS (no normalisation).',
