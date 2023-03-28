@@ -19,7 +19,7 @@ optional arguments:
   -s SMILES string  Your input SMILES string for which to calculate the score
   -i filename.ext   Your .csv or .tsv file containing column called "Smiles" which contains SMILES strings. Resutls will be
                     saved in a new .csv file
-  -o filename.ext   You can specify name of the output .csv file. Not required.
+  -o filename.csv   You can specify name of the output .csv file. Not required.
   -t                Option to calculate total SPS (no normalisation).
   -v                Option to print verbose results, with information for each atom index.
   -p                Option to print confirmation after procession of each SMILES string in a file.
