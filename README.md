@@ -2,7 +2,7 @@
 A Comprehensive Topological Indicator for Small Molecule Complexity
 (Created by Waldmann Lab at the Max Planck Institute of Molecular Physiology, Dortmund)
 
-The score is intended for assessing molecular topology of organic molecules and improve upon the idea of the fraction of stereo and sp3 carbons.
+The score is intended for assessing molecular topology of organic molecules and improve upon the idea of the fraction of stereo and sp<sup>3</sup> carbons.
 
 The script requires [RDKit package](https://www.rdkit.org/) and numpy.
 
