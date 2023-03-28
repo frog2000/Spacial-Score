@@ -1,5 +1,5 @@
 # Spacial-Score
-A Comprehensive Topological Indicator for Small Molecule Complexity
+<b>A Comprehensive Topological Indicator for Small Molecule Complexity<b>
 <br>(Created by the Waldmann Lab at the Max Planck Institute of Molecular Physiology, Dortmund)
 
 The score is intended for assessing molecular topology of organic molecules and improve upon the idea of the fraction of stereo and sp<sup>3</sup> carbons.
