@@ -8,7 +8,7 @@ The script requires [RDKit package](https://www.rdkit.org/) and [NumPy](https://
 
 The script can be used directly from a command line, reading either a directly provided SMILES string (-s) or a .csv/.tsv file (-i):
 ```
-usage: spacial_score_terminal.py [-h] [-s SMILES string] [-i filename.ext] [-o filename.ext] [-t] [-v] [-p]
+usage: spacial_score.py [-h] [-s SMILES string] [-i filename.ext] [-o filename.ext] [-t] [-v] [-p]
 
 Script for calculating Spacial Score (SPS) or normalised SPS (nSPS) for small molecules.
 The script can calculate the scores for a direct SMILES input or for a .csv or .tsv file containing a list of SMILES.
