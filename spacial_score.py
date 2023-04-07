@@ -252,7 +252,7 @@ if __name__ == "__main__":
                         help='Option to print verbose results, with information for each atom index.', 
                         default=False)
     parser.add_argument('-p', action="store_true",
-                        help='Option to print confirmation after procession of each SMILES string in a file.',
+                        help='Option to print confirmation after processing of each SMILES string in a file.',
                         default=False)
                                             
     if len(sys.argv) < 2:
