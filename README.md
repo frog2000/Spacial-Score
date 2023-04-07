@@ -115,7 +115,7 @@ Correct output will look like this:
 ```
 collected 7 items
 
-test_spacial_score.py .......                                                                                           [100%]
+test_spacial_score.py .......                                                                                    [100%]
 
 ================================================== 7 passed in 0.48s ==================================================
 
