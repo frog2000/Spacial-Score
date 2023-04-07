@@ -36,7 +36,7 @@ optional arguments:
   -o filename.csv   You can specify name of the output .csv file. Not required.
   -t                Option to calculate total SPS (no normalisation).
   -v                Option to print verbose results, with information for each atom index.
-  -p                Option to print confirmation after procession of each SMILES string in a file.
+  -p                Option to print confirmation after processing of each SMILES string in a file.
 ```
 
 To calculate nSPS directly from a SMILES string you can just type:
