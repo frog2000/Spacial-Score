@@ -11,7 +11,7 @@ conda env create -f environment.yml
 ```
 The script can be then accessed after actication of the just created conda environment:
 ```
-conda activate my_rdkit_env
+conda activate my_sps_env
 ```
 Now, to display the options of spacial_score.py type:
 ```
