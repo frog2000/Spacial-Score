@@ -34,26 +34,26 @@ def calc_sum_score(score_type):
 
 
 def test_hybridisation_score():
-    """ Test if the summed hybridisation score for a molecule is calculted properly """
+    """ Test if the summed hybridisation score for a molecule is calculated properly """
     hyb_score = calc_sum_score(create_sps_object().hyb_score)
     assert hyb_score == 40
 
 
 def test_stereo_score():
-    """ Test if the summed stereo score for a molecule is calculted properly """
+    """ Test if the summed stereo score for a molecule is calculated properly """
 
     stereo_score = calc_sum_score(create_sps_object().stereo_score)
     assert stereo_score == 23
 
 
 def test_ring_score():
-    """ Test if the summed ring score for a molecule is calculted properly """
+    """ Test if the summed ring score for a molecule is calculated properly """
     ring_score = calc_sum_score(create_sps_object().ring_score)
     assert ring_score == 24
 
 
 def test_bond_score():
-    """ Test if the summed bond score for a molecule is calculted properly """
+    """ Test if the summed bond score for a molecule is calculated properly """
     bond_score = calc_sum_score(create_sps_object().bond_score)
     assert bond_score == 88
 
