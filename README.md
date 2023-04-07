@@ -86,7 +86,8 @@ To read in a .csv or .tsv file, please type:
 python spacial_score.py -i your_input_file_name.csv -o your_output_file_name.csv
 ```
 nSPS is calculated by default, and option -t can be used to calculate un-normalised SPS. 
-Please, remember that your input file needs to contain a column named "Smiles" containing SMILES which will be used for the calculation of the scores. 
+Please, remember that your input file needs to contain a column named "Smiles" containing SMILES which will be used for the calculation of the scores.
+Examples of input and output files can be found in the folder named "example input and output files".
 
 ***
 The scores can also be calculated by using function:
