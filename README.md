@@ -106,4 +106,17 @@ def calculate_score_from_smiles(smiles: str, per_atom=False, verbose=False) -> f
     Total or per-atom numeric spacial score for the provided molecule.
     """
 ```
+***
+The script in spacial_score.py can be tested by running [pytest](https://docs.pytest.org/en/7.2.x/contents.html). In the active conda environment type:
+```
+pytest
+```
+Correct output will look like this:
+```
+collected 7 items
 
+test_spacial_score.py .......                                                                                           [100%]
+
+================================================== 7 passed in 0.48s ==================================================
+
+```
