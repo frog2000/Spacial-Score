@@ -10,7 +10,7 @@ To install the required packages through [Conda](https://docs.conda.io/en/latest
 ```
 conda env create -f environment.yml
 ```
-The script can be then accessed after actication of the just created conda environment:
+The script can be then accessed after activation of the just created conda environment:
 ```
 conda activate my_sps_env
 ```
