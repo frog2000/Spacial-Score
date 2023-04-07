@@ -2,7 +2,7 @@
 <b>A Comprehensive Topological Indicator for Small Molecule Complexity</b>
 <br>(Created by the Waldmann Lab at the Max Planck Institute of Molecular Physiology, Dortmund)
 
-The score is intended for assessing molecular topology of organic molecules and improve upon the idea of the fraction of stereo and sp<sup>3</sup> carbons.
+The score is intended for assessing molecular topology of organic molecules and to improve upon the idea of the fraction of stereo and sp<sup>3</sup> carbons.
 
 The script requires [RDKit package](https://www.rdkit.org/) and [NumPy](https://numpy.org/).
 To install the required packages through [Conda](https://docs.conda.io/en/latest/miniconda.html), simply use the environment.yml file:
@@ -36,6 +36,56 @@ optional arguments:
   -v                Option to print verbose results, with information for each atom index.
   -p                Option to print confirmation after procession of each SMILES string in a file.
 ```
+
+To calculate nSPS directly from a SMILES string you can just type:
+```
+python spacial_score.py -s CC(C)CBr
+```
+Where CC(C)CBr is just an example of a SMILES string.
+This returns:
+```
+Normalisation Applied: True
+SMILES: CC(C)CBr
+Calculated nSPS: 9.6
+```
+
+To calculate the un-normalised (total) SPS you need to add option -t:
+```
+python spacial_score.py -s CC(C)CBr -t
+```
+This returns:
+```
+Normalisation Applied: False
+SMILES: CC(C)CBr
+Calculated SPS: 48
+```
+
+A more verbose output can be achieved with the option -v: 
+```
+python spacial_score.py -s CC(C)CBr -v
+```
+The output:
+```
+SMILES: CC(C)CBr
+Atom Idx  Element   Hybrid    Stereo    Ring      Neighbs
+------------------------------------------------------------
+0         C         3         1         1         1
+1         C         3         1         1         9
+2         C         3         1         1         1
+3         C         3         1         1         4
+4         Br        3         1         1         1
+------------------------------------------------------------
+Total Spacial Score: 48
+Per-Atom Score: 9.6
+```
+
+To read in a .csv or .tsv file, please type:
+```
+python spacial_score.py -i your_input_file_name.csv -o your_output_file_name.csv
+```
+nSPS is calculated by default, and option -t can be used to calculate un-normalised SPS. 
+Please, remember that your input file needs to contain a column named "Smiles" containing SMILES which will be used for the calculation of the scores. 
+
 
 The scores can also be calculated by using function:
 ```
