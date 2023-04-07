@@ -107,7 +107,7 @@ def calculate_score_from_smiles(smiles: str, per_atom=False, verbose=False) -> f
     """
 ```
 ***
-The script in spacial_score.py can be tested by running [pytest](https://docs.pytest.org/en/7.2.x/contents.html). In the active conda environment type:
+The script in spacial_score.py can be tested by running [pytest](https://docs.pytest.org/en/7.2.x/contents.html). In the active my_sps_env conda environment type:
 ```
 pytest
 ```
