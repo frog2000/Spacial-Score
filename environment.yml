@@ -1,0 +1,8 @@
+name: my_sps_env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python>=3.8
+  - rdkit=2021.09.3
+  - numpy=1.21.5
