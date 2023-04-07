@@ -5,6 +5,18 @@
 The score is intended for assessing molecular topology of organic molecules and improve upon the idea of the fraction of stereo and sp<sup>3</sup> carbons.
 
 The script requires [RDKit package](https://www.rdkit.org/) and [NumPy](https://numpy.org/).
+To install the required packages through [Conda](https://docs.conda.io/en/latest/miniconda.html), simply use the environment.yml file:
+```
+conda env create -f environment.yml
+```
+The script can be then accessed after actication of the just created conda environment:
+```
+conda activate my_rdkit_env
+```
+Now, to display the options of spacial_score.py type:
+```
+python spacial_score.py -h
+```
 
 The script can be used directly from a command line, reading either a directly provided SMILES string (-s) or a .csv/.tsv file (-i):
 ```
