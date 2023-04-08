@@ -4,7 +4,7 @@
 
 The score is intended for assessing molecular topology of organic molecules and to improve upon the idea of the fraction of stereo and sp<sup>3</sup> carbons. The score is described in our pre-print: [Spacial Score – A Comprehensive Topological Indicator for Small Molecule Complexity]( https://doi.org/10.26434/chemrxiv-2023-nd1ll).
 
-<img src="https://repository-images.githubusercontent.com/609714000/d6a66509-cce9-4318-8023-17c674cd8cf7" alt="logo" width="600" align="centre"/>
+<img src="https://repository-images.githubusercontent.com/609714000/d6a66509-cce9-4318-8023-17c674cd8cf7" alt="logo" width="500" align="centre"/>
 
 ***
 The script requires [RDKit package](https://www.rdkit.org/) and [NumPy](https://numpy.org/).
