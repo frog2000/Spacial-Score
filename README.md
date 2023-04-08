@@ -1,4 +1,6 @@
 # Spacial-Score
+<img src="https://repository-images.githubusercontent.com/609714000/d6a66509-cce9-4318-8023-17c674cd8cf7" alt="logo" width="500" align="right"/>
+
 <b>A Comprehensive Topological Indicator for Small Molecule Complexity</b>
 <br>(Created by the Waldmann Lab at the Max Planck Institute of Molecular Physiology, Dortmund)
 
