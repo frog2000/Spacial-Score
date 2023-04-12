@@ -7,8 +7,9 @@ The score is intended for assessing molecular topology of organic molecules and 
 <img src="https://repository-images.githubusercontent.com/609714000/d6a66509-cce9-4318-8023-17c674cd8cf7" alt="logo" width="500" align="centre"/>
 
 ***
+### Required Python Packages
 The script requires [RDKit package](https://www.rdkit.org/) and [NumPy](https://numpy.org/).
-To install the required packages through [Conda](https://docs.conda.io/en/latest/miniconda.html), simply use the environment.yml file:
+To install the required packages through [Conda](https://docs.conda.io/en/latest/miniconda.html), simply use the `environment.yml` file:
 ```
 conda env create -f environment.yml
 ```
@@ -16,13 +17,14 @@ The script can be used after activation of the just created conda environment:
 ```
 conda activate my_sps_env
 ```
-Now, to display the options of spacial_score.py type:
+To display the options of spacial_score.py type:
 ```
 python spacial_score.py -h
 ```
-
+(Please remember that `spacial_score.py` needs to be in your current directory)
 ***
-The script can be used directly from a command line, reading either a directly provided SMILES string (-s) or a .csv/.tsv file (-i):
+### Using the Script Through Command Line
+The script can be used directly from a command line, reading either a directly provided SMILES string `(-s)` or a .csv/.tsv file `(-i)`:
 ```
 usage: spacial_score.py [-h] [-s SMILES string] [-i filename.ext] [-o filename.ext] [-t] [-v] [-p]
 
@@ -53,7 +55,7 @@ SMILES: CC(C)CBr
 Calculated nSPS: 9.6
 ```
 
-To calculate the un-normalised (total) SPS you need to add option -t:
+To calculate the un-normalised (total) SPS you need to add option `-t`:
 ```
 python spacial_score.py -s CC(C)CBr -t
 ```
@@ -64,7 +66,7 @@ SMILES: CC(C)CBr
 Calculated SPS: 48
 ```
 
-A more verbose output can be achieved with the option -v: 
+A more verbose output can be achieved with the option `-v`: 
 ```
 python spacial_score.py -s CC(C)CBr -v
 ```
@@ -87,11 +89,12 @@ To read in a .csv or .tsv file, please type:
 ```
 python spacial_score.py -i your_input_file_name.csv -o your_output_file_name.csv
 ```
-nSPS is calculated by default, and option -t can be used to calculate un-normalised SPS. 
-Please, remember that your input file needs to contain a column named "Smiles" containing SMILES which will be used for the calculation of the scores.
-Examples of input and output files can be found in the folder named "example_input_output_files".
+nSPS is calculated by default, and option `-t` can be used to calculate un-normalised SPS. 
+Please, remember that your input file needs to contain a column named `Smiles` containing SMILES which will be used for the calculation of the scores.
+Examples of input and output files can be found in the folder named `example_input_output_files`.
 
 ***
+### Calculate the Score with a Python Function
 The scores can also be calculated by using function:
 ```
 def calculate_score_from_smiles(smiles: str, per_atom=False, verbose=False) -> float:
@@ -109,7 +112,8 @@ def calculate_score_from_smiles(smiles: str, per_atom=False, verbose=False) -> f
     """
 ```
 ***
-The script in spacial_score.py can be tested by running [pytest](https://docs.pytest.org/en/7.2.x/contents.html). In the active my_sps_env conda environment type:
+### Testing the Script
+The script in `spacial_score.py` can be tested by running [pytest](https://docs.pytest.org/en/7.2.x/contents.html). In the active `my_sps_env` conda environment type:
 ```
 pytest
 ```
