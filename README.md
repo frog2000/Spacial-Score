@@ -17,7 +17,7 @@ The script can be used after activation of the just created conda environment:
 ```
 conda activate my_sps_env
 ```
-To display the options of spacial_score.py type:
+To display the options of `spacial_score.py`, type:
 ```
 python spacial_score.py -h
 ```
