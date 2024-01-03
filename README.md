@@ -4,7 +4,7 @@
 
 The score is intended for assessing molecular topology of organic molecules and to improve upon the idea of the fraction of stereo and sp<sup>3</sup> carbons. The score is described in our J. Med. Chem. paper: [Spacial Score – A Comprehensive Topological Indicator for Small Molecule Complexity](https://doi.org/10.1021/acs.jmedchem.3c00689).
 
---> The SPS indicator is now also a part of the RDKit package and available through the [rdkit.Chem.SpacialScore](https://www.rdkit.org/docs/source/rdkit.Chem.SpacialScore.html#module-rdkit.Chem.SpacialScore) module.
+### --> The SPS indicator is now also a part of the RDKit package and available through the [rdkit.Chem.SpacialScore](https://www.rdkit.org/docs/source/rdkit.Chem.SpacialScore.html#module-rdkit.Chem.SpacialScore) module. SPS script is actively mantained as part of the RDKit package, and thus, it is recommended to calculate the SPS through RDKit.
 
 <img src="https://repository-images.githubusercontent.com/609714000/d6a66509-cce9-4318-8023-17c674cd8cf7" alt="logo" width="500" align="centre"/>
 
