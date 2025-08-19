@@ -12,15 +12,37 @@ The score is intended for assessing molecular topology of organic molecules and 
 ***
 ### Required Python Packages
 The script requires [RDKit package](https://www.rdkit.org/) and [NumPy](https://numpy.org/).
-To install the required packages through [Conda](https://docs.conda.io/en/latest/miniconda.html), simply use the `environment.yml` file:
+#### Installation via `uv`
+1. Install [uv](https://docs.astral.sh/uv/getting-started/installation/) 
+2. Create a Python environment.
+```
+uv venv --seed .venv --python 3.9
+source activate .venv/bin/activate
+```
+You can replace `--python 3.9` with any other Python latest versions.
+
+3. Install all the required packages:
+```
+uv sync
+```
+4. Get all the available options from `spacial_score.py` to calculate the scores:
+``` 
+python spacial_score.py -h
+```
+
+#### Installation via `conda`
+
+1. Install [conda](https://www.anaconda.com/docs/getting-started/miniconda/install)
+
+2. To install the required packages through [Conda](https://docs.conda.io/en/latest/miniconda.html), simply use the `environment.yml` file:
 ```
 conda env create -f environment.yml
 ```
-The script can be used after activation of the just created conda environment:
+3. The script can be used after activation of the just created conda environment:
 ```
 conda activate my_sps_env
 ```
-To display the options of `spacial_score.py`, type:
+4. To display the options of `spacial_score.py`, type:
 ```
 python spacial_score.py -h
 ```
