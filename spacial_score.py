@@ -10,9 +10,10 @@ import csv
 
 class SpacialScore:
     """Class intended for calculating spacial score (SPS) and size-normalised SPS (nSPS) for small organic molecules"""
-    def __init__(self, smiles, mol, verbose=False):
+    def __init__(self, smiles, mol, state_hyb, verbose=False):
         self.smiles = smiles
         self.mol = mol
+        self.hyb_state = state_hyb
         self.verbose = verbose
 
         self.hyb_score = {}
@@ -21,7 +22,7 @@ class SpacialScore:
         self.bond_score = {}
         self.chiral_idxs = self.find_stereo_atom_idxs()
         self.doublebonds_stereo = self.find_doublebonds_stereo()
-        self.score = self.calculate_spacial_score()
+        self.score, self.hyb_fraction, self.stereo_fraction = self.calculate_spacial_score()
         self.per_atom_score = self.score/Desc.HeavyAtomCount(self.mol)
 
         if self.verbose:
@@ -50,8 +51,10 @@ class SpacialScore:
             print(str(self.bond_score[atom_idx]).ljust(10, " "))
        
         print("".ljust(60, "-"))
-        print("Total Spacial Score:", self.score)
-        print("Per-Atom Score:", self.per_atom_score.__round__(2), "\n")
+        print(f"Total Spacial Score: {self.score}")
+        print(f"Per-Atom Score: {self.per_atom_score.__round__(2)}")
+        print(f"The Fsp{self.hyb_state} score: {self.hyb_fraction.__round__(2)}")
+        print(f"The Fcstereo score: {self.stereo_fraction.__round__(2)}", "\n")
 
 
     def find_stereo_atom_idxs(self, includeUnassigned=True):
@@ -71,16 +74,25 @@ class SpacialScore:
 
 
     def calculate_spacial_score(self):
-        """Calculates the total spacial score for a molecule"""
+        """Calculates the total spacial score for a molecule. Additionally, it returns fractions of spN hybridized and fraction of stereogenic carbons"""
         score = 0
+        carbon_count, hyb_count, stereo_count = 0, 0, 0 # Useful for Fraction's calculations
+
         for atom in self.mol.GetAtoms():
             atom_idx = atom.GetIdx()
             self.hyb_score[atom_idx] = self._account_for_hybridisation(atom)
+            
+            # Checking only for C atoms
+            if atom.GetSymbol() == "C":
+                carbon_count +=1
+                hyb_count += 1 if self.hyb_score[atom_idx] == self.hyb_state else 0
+                stereo_count += 1 if self._account_for_stereo(atom_idx) == 2 else 0
+
             self.stereo_score[atom_idx] = self._account_for_stereo(atom_idx)
             self.ring_score[atom_idx] = self._account_for_ring(atom)
             self.bond_score[atom_idx] = self._account_for_neighbours(atom)
             score += self._calculate_score_for_atom(atom_idx)
-        return score
+        return score, (hyb_count/carbon_count).__round__(2), (stereo_count/carbon_count).__round__(2)
 
 
     def _calculate_score_for_atom(self, atom_idx):
@@ -150,15 +162,16 @@ def close_files(open_files:tuple):
         file.close()
 
 
-def process_input(smiles:str, filename:str, output_name:str, total_score:bool, verbose:bool, confirmation:False):
+def process_input(smiles:str, filename:str, output_name:str, hyb_state:int, total_score:bool, verbose:bool, confirmation:False):
     """Processes the command line input to print out the resulting score or create a file with added results"""
 
     if smiles:  # process a directly provided SMILES string
-        result = calculate_score_from_smiles(smiles, per_atom=(not total_score), verbose=verbose)
+        result_sps, result_fhyb, result_stereo = calculate_score_from_smiles(smiles, hyb_state, per_atom=(not total_score), verbose=verbose)
         if not verbose:
             score_type = "SPS" if total_score else "nSPS" 
-            print(f"\nNormalisation Applied: {not total_score}\nSMILES: {smiles}\nCalculated {score_type}: {result}")
-        if result is np.nan:
+            print(f"\nNormalisation Applied: {not total_score}\nSMILES: {smiles}\nCalculated {score_type}: {result_sps}")
+            print(f"Fraction of sp{hyb_state} carbons: {result_fhyb}\nFraction of Stereogenic carbons: {result_stereo}")
+        if result_sps is np.nan:
             print("\nPlease double-check your input SMILES string...")
     
     elif filename:  # process provided file
@@ -180,21 +193,23 @@ def process_input(smiles:str, filename:str, output_name:str, total_score:bool, v
         for idx, row in enumerate(reader):
             if idx == 0:
                 header = [column_name for column_name in row]  # read existing headers
-                # add SPS or nSPS column to the file 
+                # add SPS or nSPS, Fsp, & Fcstereo columns to the file 
                 if total_score:
                     header.append("SPS")  
-                header.append("nSPS")
+                header.extend(["nSPS", f"Fsp{hyb_state}", f"Fcstereo"])
                 outfile.write(",".join(header) + "\n")
             
             try:
                 if total_score:
-                    row["SPS"] = calculate_score_from_smiles(row["Smiles"], per_atom=False, verbose=verbose)
-                row["nSPS"] = calculate_score_from_smiles(row["Smiles"], per_atom=True, verbose=verbose)
+                    row["SPS"], row[f"Fsp{hyb_state}"], row["FCstereo"] = calculate_score_from_smiles(row["Smiles"], hyb_state, per_atom=False, verbose=verbose)
+                row["nSPS"], row[f"Fsp{hyb_state}"], row["FCstereo"] = calculate_score_from_smiles(row["Smiles"], hyb_state, per_atom=True, verbose=verbose)
             except KeyError:
                 close_files((outfile, infile))
                 raise KeyError("Please make sure that your file contains column called 'Smiles' with SMILES strings")
             
             line = [str(row[x]) for x in row]  # reconstruct the row 
+            line.insert(2, line.pop()) if "SPS" in header else None
+
             outfile.write(",".join(line) + "\n")
             if confirmation:
                 print("Finished calculations for:", row["Smiles"])
@@ -205,7 +220,7 @@ def process_input(smiles:str, filename:str, output_name:str, total_score:bool, v
         raise ValueError(f"No input was provided")
 
 
-def calculate_score_from_smiles(smiles: str, per_atom=False, verbose=False) -> float:
+def calculate_score_from_smiles(smiles: str, hyb: int, per_atom=False, verbose=False) -> float:
     """ Calculates the spacial score as a total SPS or size-normalised, per-atom nSPS for a molecule.
 
     Parameters:
@@ -221,10 +236,10 @@ def calculate_score_from_smiles(smiles: str, per_atom=False, verbose=False) -> f
     mol = smiles_to_mol(smiles)
     if mol is np.nan:
         return np.nan
-    sps = SpacialScore(smiles, mol, verbose)
+    sps = SpacialScore(smiles, mol, hyb, verbose)
     if per_atom:
-        return sps.per_atom_score
-    return sps.score
+        return sps.per_atom_score, sps.hyb_fraction, sps.stereo_fraction
+    return sps.score, sps.hyb_fraction, sps.stereo_fraction
 
 
 if __name__ == "__main__":
@@ -245,6 +260,9 @@ if __name__ == "__main__":
                         help='You can specify name of the output .csv file. Not required.', 
                         metavar='filename.csv', 
                         default=None)
+    parser.add_argument('-hyb', action="store",
+                        metavar="Hybrization State",
+                        help='1, 2, and 3 for sp-, sp2-, and sp3-hybridized atoms', default=3)
     parser.add_argument('-t', action="store_true",
                         help='Option to calculate total SPS (no normalisation).',
                         default=False)
@@ -260,4 +278,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
     ARGS = parser.parse_args()
-    process_input(smiles=ARGS.s, filename=ARGS.i, output_name=ARGS.o, total_score=ARGS.t, verbose=ARGS.v, confirmation=ARGS.p) 
+    process_input(smiles=ARGS.s, filename=ARGS.i, output_name=ARGS.o, hyb_state=ARGS.hyb, total_score=ARGS.t, verbose=ARGS.v, confirmation=ARGS.p) 
